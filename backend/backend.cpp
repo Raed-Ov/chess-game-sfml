@@ -5,6 +5,7 @@
 #include <cctype>
 #include <fstream>
 #include <windows.h>
+#include <filesystem>
 using namespace std;
 
 // Forward declarations
@@ -341,17 +342,12 @@ public:
 
 // ===== Helper Functions =====
 void renderWindow() {
-    fstream render("renderWindow.txt", ios::out | ios::trunc);
-    render << 1;
+    ofstream render("render");
     render.close();
-    Sleep(1000);
 }
 
 void closeWindow() {
-    fstream render("renderWindow.txt", ios::out | ios::trunc);
-    render << 0;
-    render.close();
-    Sleep(1000);
+    filesystem::remove("render");
 }
 
 // ===== Main Function =====

@@ -6,6 +6,7 @@
 #include "grid.h"
 #include <fstream>
 #include <windows.h>
+#include <filesystem>
 
 
 using namespace sf;
@@ -13,27 +14,22 @@ using namespace sf;
 
 int main()
 {
-    int render=1;
-    std::ifstream data("backend/renderWindow.txt");
-    Sleep(100);
-    data>>render;
-
-    if(render)
+    while(std::filesystem::exists("run"))
+    if(std::filesystem::exists("backend/render"))
     {
     RenderWindow screen(VideoMode({800, 800}), "Chess Game");
     Grid guiGrid;
     guiGrid.update();
     guiGrid.draw(screen);
-    while (render)
+    while (std::filesystem::exists("backend/render"))
     {
-            data.seekg(0);
-            data>>render;
             auto event=screen.pollEvent();
             if(event) if (event->is<Event::Closed>())break;                          
     }
 
-    data.close();
     screen.close();   
-    return 0;
     }
+
+
+    return 0;
 }
