@@ -4,9 +4,25 @@
 #include <string>
 #include <cctype>
 #include <fstream>
+#include <filesystem>
+#include <windows.h>
+#include <cstdio>
+
+
 
 using namespace std;
 class Board;
+void refresh();
+
+void renderWindow()
+{
+    ofstream("render").close();
+}
+
+void closeWindow()
+{
+    filesystem::remove("render");
+}
 
 class Piece{
 protected:
@@ -133,6 +149,7 @@ public:
     }
 
     void print() const{
+        closeWindow();
         ofstream outfile("data.txt", ios::out | ios::trunc);
         for (int r = 0; r < 8; ++r){
             for (int c = 0; c < 8; ++c){
@@ -142,6 +159,7 @@ public:
             outfile<< endl;
         }
         outfile.close();
+        renderWindow();
     }
 
     vector<pair<int, int>> getLinearMoves(int row, int col, string color, vector<pair<int, int>> directions){
@@ -248,15 +266,16 @@ public:
     }
 
     void play(){
-        while (true){
+        while (filesystem::exists("run")){
             board.print();
             cout << currentTurn << "'s move (format: e2 e4 or type 'exit'): ";
             string startPos, endPos;
-            cin >> startPos;
-            if (startPos == "exit") break;
-            cin >> endPos;
-            if (endPos == "exit") break;
+            
+            while(startPos.empty()&&filesystem::exists("run")){refresh();cin>>startPos;}
+            while(endPos.empty()&&filesystem::exists("run")){refresh();cin>>endPos;}
+            
 
+            cout<<"Moves:"<<startPos<<' '<<endPos<<endl;
             auto [sr, sc] = parsePosition(startPos);
             auto [er, ec] = parsePosition(endPos);
 
@@ -282,9 +301,29 @@ public:
     }
 };
 
-int main(){
-    Game game;
-    game.play();
-    cout << "Thanks for playing!\n";
+int main()
+{
+    try
+    {
+        Game game;
+        game.play();
+        cout << "Thanks for playing!\n";
+        closeWindow();
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+    
     return 0;
+}
+
+void refresh() 
+{
+    static ifstream in("../mouseOutput.txt");
+    cin.rdbuf(in.rdbuf());
+
+    // This allows reading more if new data has been appended
+    in.clear();
+    in.seekg(0, std::ios::cur);
 }

@@ -7,6 +7,8 @@
 using namespace sf;
 #pragma once
 
+
+
 class Grid
 {
     static constexpr float squareSize = 100.0f;
@@ -20,7 +22,7 @@ class Grid
     std::ifstream data("backend/data.txt");
     for(int i=0;i<8;i++)
        for(int j=0;j<8;j++)
-           data>>fileGrid[i][j];
+           data>>fileGrid[i][j];     
    }
 public:
     Grid()
@@ -34,9 +36,9 @@ public:
                 squares[row][col].setOutlineColor(Color::Black);
 
                 if ((row + col) % 2 == 0)
-                    squares[row][col].setFillColor(Color::White);
+                    squares[row][col].setFillColor(Color(128,128,128));
                 else
-                    squares[row][col].setFillColor(Color(255, 105, 180)); // pink
+                    squares[row][col].setFillColor(Color(128,128,128)); // pink
             }
     }
 
@@ -50,7 +52,7 @@ public:
 
     void draw(RenderWindow& screen)
     {
-        screen.clear(Color(255,105,180));
+        screen.clear(Color(128,128,128));
         //screen.clear();    
         for (int i = 0; i < 8; ++i)
             for (int j = 0; j < 8; ++j)
